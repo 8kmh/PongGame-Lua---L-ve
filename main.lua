@@ -25,6 +25,8 @@ scorePlayer2= 0
 scorePlayer1Reset = 0
 scorePlayer2Reset= 0
 
+trailList = {}
+
 screenHeight = love.graphics.getHeight()
 screenWidth = love.graphics.getWidth()
 
@@ -83,6 +85,20 @@ function love.update(dt)
   end
   
   ------------------------------------- Ball -------------------------------------------
+  for n = #trailList, 1, -1 do
+    local t = trailList[n]
+    t.life = t.life - dt
+    if t.life <= 0 then
+      table.remove(trailList, n)
+    end
+  end
+  
+  
+  local trail = {}
+  trail.x = ball.x
+  trail.y = ball.y
+  trail.life = 0.5
+  table.insert(trailList, trail)
   
   if ball.x < 0 then
     ball.speed_x = ball.speed_x * -1
@@ -137,7 +153,14 @@ function love.draw()
   love.graphics.rectangle("fill", pad.x, pad.y, pad.width, pad.height)
   -- Player 2
   love.graphics.rectangle("fill", pad2.x, pad2.y, pad2.width, pad2.height)
+  -- Trail
+  for n = 1, #trailList do
+    local t = trailList[n]
+    love.graphics.setColor(1, 1, 1, t.life / 2)
+    love.graphics.rectangle("fill", t.x, t.y, ball.width, ball.height)
+  end
   -- Ball
+  love.graphics.setColor(1, 1, 1, 1)
   love.graphics.rectangle("fill", ball.x, ball.y, ball.width, ball.height)
   -- Central Line
   love.graphics.rectangle("fill", screenWidth / 2 - 10, 0, 10, 600)
