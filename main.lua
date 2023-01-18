@@ -30,7 +30,7 @@ screenWidth = love.graphics.getWidth()
 
 -------------------------------------- Function --------------------------------------
 
-function centreBall()
+function centerBall()
   ball.x =  love.graphics.getWidth() / 2
   ball.x = ball.x - ball.width / 2
   
@@ -42,7 +42,8 @@ function centreBall()
 end
 
 function startNewGame()
-  centreBall()
+  centerBall()
+  centerPad()
   scorePlayer1 = scorePlayer1Reset
   scorePlayer2 = scorePlayer2Reset
 end
@@ -55,11 +56,12 @@ end
 ---------------------------------------- Load ----------------------------------------
 
 function love.load()
-  centreBall()
+  centerBall()
   centerPad()
 end
 
 function love.update(dt)
+  
   -------------------------------------- Control --------------------------------------
   -- Control Player 1
   if love.keyboard.isDown("s") and pad.y < screenHeight - pad.height then
@@ -88,42 +90,41 @@ function love.update(dt)
   if ball.y < 0 then
   ball.speed_y = ball.speed_y * -1
   end
-  if ball.x > love.graphics.getWidth() - ball.width then
+  if ball.x > screenWidth - ball.width then
     ball.speed_x = ball.speed_x * -1
   end
-  if ball.y > love.graphics.getHeight() - ball.height then
+  if ball.y > screenHeight - ball.height then
     ball.speed_y = ball.speed_y * -1
   end
   
-  -- La balle à t-elle ateint la raquette ? 
+  -- Player 1 collision
   if ball.x <= pad.x + pad.width then
-  -- Tester maintenant si la balle est sur la raquette ou pas
     if ball.y + ball.height > pad.y and ball.y < pad.y + pad.height then
         ball.speed_x = ball.speed_x * -1
-        -- Positionne la balle au bord de la raquette
         ball.x = pad.x + pad.width
     end
   end
-  
+  -- Player 2 collision
   if ball.x + ball.width >= pad2.x then
-    
     if ball.y + ball.height > pad2.y and ball.y < pad2.y + pad2.height then
         ball.speed_x = ball.speed_x * -1
-        
         ball.x = pad2.x - pad2.width
     end
   end
   
-  
-  ----------------------- TODO -----------------------------
-  if ball.x < 0 or ball.x + ball.width > screenWidth then
-    -- Lost !
-    centreBall()
+  -- Player 1 Lost
+  if ball.x < 0 then
+    centerBall()
     centerPad()
+    scorePlayer2 =  scorePlayer2 + 1
+  end
+  -- Player 2 Lost
+  if ball.x + ball.width > screenWidth then
+    centerBall()
+    centerPad()
+    scorePlayer1 =  scorePlayer1 + 1
   end
     
-  
-  
   ball.x = ball.x + ball.speed_x
   ball.y = ball.y + ball.speed_y
   
@@ -140,4 +141,7 @@ function love.draw()
   love.graphics.rectangle("fill", ball.x, ball.y, ball.width, ball.height)
   -- Central Line
   love.graphics.rectangle("fill", screenWidth / 2 - 10, 0, 10, 600)
+  -- Score
+  local score = scorePlayer1.. " - " ..scorePlayer2
+  love.graphics.print(score, 400, 0)
 end
