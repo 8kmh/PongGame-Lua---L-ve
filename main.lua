@@ -61,18 +61,18 @@ end
 
 function love.update(dt)
   -------------------------------------- Control --------------------------------------
-  -- Control Joueur 1
-  if love.keyboard.isDown("down") and pad.y < screenHeight - pad.height then
+  -- Control Player 1
+  if love.keyboard.isDown("s") and pad.y < screenHeight - pad.height then
     pad.y = pad.y + 2
   end
-  if love.keyboard.isDown("up") and pad.y > 0 then 
+  if love.keyboard.isDown("z") and pad.y > 0 then 
     pad.y = pad.y - 2
   end
-  -- Control Joueur 2
-  if love.keyboard.isDown("s") and pad2.y < screenHeight - pad.height then
+  -- Control Player 2
+  if love.keyboard.isDown("down") and pad2.y < screenHeight - pad.height then
     pad2.y = pad2.y + 2
   end
-  if love.keyboard.isDown("z") and pad2.y > 0 then 
+  if love.keyboard.isDown("up") and pad2.y > 0 then 
     pad2.y = pad2.y - 2
   end
   
@@ -99,16 +99,25 @@ function love.update(dt)
   if ball.x <= pad.x + pad.width then
   -- Tester maintenant si la balle est sur la raquette ou pas
     if ball.y + ball.height > pad.y and ball.y < pad.y + pad.height then
-        ball.vitesse_x = ball.vitesse_x * -1
+        ball.speed_x = ball.speed_x * -1
         -- Positionne la balle au bord de la raquette
         ball.x = pad.x + pad.width
+    end
+  end
+  
+  if ball.x + ball.width >= pad2.x then
+    
+    if ball.y + ball.height > pad2.y and ball.y < pad2.y + pad2.height then
+        ball.speed_x = ball.speed_x * -1
+        
+        ball.x = pad2.x - pad2.width
     end
   end
   
   
   ----------------------- TODO -----------------------------
   if ball.x < 0 or ball.x + ball.width > screenWidth then
-    -- Perdu !
+    -- Lost !
     centreBall()
     centerPad()
   end
